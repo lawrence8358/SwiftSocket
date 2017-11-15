@@ -57,20 +57,45 @@ void ytcpsocket_set_block(int socket, int on) {
 }
 
 int ytcpsocket_connect(const char *host, int port, int timeout) {
-    struct sockaddr_in sa;
+    struct sockaddr_in svraddr_4;
+    struct sockaddr_in6 svraddr_6;
+    
     struct hostent *hp;
     int sockfd = -1;
-    hp = gethostbyname(host);
+    
+    struct addrinfo *result;
+    getaddrinfo(host, NULL, NULL, &result);
+    const struct sockaddr *tempSa = result -> ai_addr;
+    
+    //hp = gethostbyname(host);
+    hp = gethostbyname2(host, tempSa -> sa_family);
     if (hp == NULL) {
         return -1;
     }
-  
-    bcopy((char *)hp->h_addr, (char *)&sa.sin_addr, hp->h_length);
-    sa.sin_family = hp->h_addrtype;
-    sa.sin_port = htons(port);
-    sockfd = socket(hp->h_addrtype, SOCK_STREAM, 0);
-    ytcpsocket_set_block(sockfd,0);
-    connect(sockfd, (struct sockaddr *)&sa, sizeof(sa));
+    
+    switch(tempSa -> sa_family) {
+        case AF_INET: //ipv4
+            bcopy((char *)hp->h_addr, (char *)&svraddr_4.sin_addr, hp->h_length);
+            svraddr_4.sin_family = hp->h_addrtype;
+            svraddr_4.sin_port = htons(port);
+            sockfd = socket(hp->h_addrtype, SOCK_STREAM, 0);
+            ytcpsocket_set_block(sockfd,0);
+            connect(sockfd, (struct sockaddr *)&svraddr_4, sizeof(svraddr_4));
+            //printf("ytcpsocket_connect :: %s :: this is ipv4 ******************\n", hp->h_name);
+            break;
+        case AF_INET6: //ipv6
+            bcopy((char *)hp->h_addr, (char *)&svraddr_6.sin6_addr, hp->h_length);
+            svraddr_6.sin6_family = hp->h_addrtype;
+            svraddr_6.sin6_port = htons(port);
+            sockfd = socket(hp->h_addrtype, SOCK_STREAM, 0);
+            ytcpsocket_set_block(sockfd,0);
+            connect(sockfd, (struct sockaddr *)&svraddr_6, sizeof(svraddr_6));
+            //printf("ytcpsocket_connect :: %s :: this is ipv6 ******************\n", hp->h_name);
+            break;
+    }
+    
+    freeaddrinfo(result);
+    
     fd_set fdwrite;
     struct timeval  tvSelect;
     FD_ZERO(&fdwrite);

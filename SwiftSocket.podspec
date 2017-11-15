@@ -1,14 +1,14 @@
 Pod::Spec.new do |s|
 
   s.name         = 'SwiftSocket'
-  s.version      = '2.0.2'
+  s.version      = ‘2.0.3’
   s.summary      = 'A cool framework to work with TCP and UDP sockets'
 
   s.description  = <<-DESC
                     SwiftSocket profieds an easy way to create TCP or UDP clients and servers 💁
                    DESC
 
-  s.homepage     = 'https://github.com/swiftsocket/SwiftSocket'
+  s.homepage     = 'https://github.com/lawrence8358/SwiftSocket'
   
   s.license      = { :type => 'BSD' }
 
