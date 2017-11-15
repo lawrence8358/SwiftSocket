@@ -81,7 +81,7 @@ int ytcpsocket_connect(const char *host, int port, int timeout) {
             sockfd = socket(hp->h_addrtype, SOCK_STREAM, 0);
             ytcpsocket_set_block(sockfd,0);
             connect(sockfd, (struct sockaddr *)&svraddr_4, sizeof(svraddr_4));
-            //printf("ytcpsocket_connect :: %s :: this is ipv4 ******************\n", hp->h_name);
+            printf("ytcpsocket_connect :: %s :: this is ipv4 ******************\n", hp->h_name);
             break;
         case AF_INET6: //ipv6
             bcopy((char *)hp->h_addr, (char *)&svraddr_6.sin6_addr, hp->h_length);
@@ -90,7 +90,10 @@ int ytcpsocket_connect(const char *host, int port, int timeout) {
             sockfd = socket(hp->h_addrtype, SOCK_STREAM, 0);
             ytcpsocket_set_block(sockfd,0);
             connect(sockfd, (struct sockaddr *)&svraddr_6, sizeof(svraddr_6));
-            //printf("ytcpsocket_connect :: %s :: this is ipv6 ******************\n", hp->h_name);
+            printf("ytcpsocket_connect :: %s :: this is ipv6 ******************\n", hp->h_name);
+            break;
+        default:
+            printf("ytcpsocket_connect :: %s :: this is default ******************\n", hp->h_name);
             break;
     }
     
